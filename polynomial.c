@@ -2,6 +2,7 @@
                     //Should create a modified snprintf for portability later
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct term {
     int coeff;
@@ -87,29 +88,47 @@ void poly_add_term(polynomial **front, polynomial *newTerm)
 int main(void)
 {
     polynomial *myPoly = term_create(5, 2);
-    poly_add_term(&myPoly, term_create(3, 1));
+    myPoly->next = term_create(3, 1);
+
     char *s = poly_to_string(myPoly);
+    poly_print(myPoly);
+    poly_destroy(myPoly);
+
     printf("%s\n", s);
+    free(s);
 }
 
 char *poly_to_string(const polynomial *p)
 {
-    char *s = "";
+    char *string1;
+    char *string2;
+    char *r;
     if(!p) {
-        return s;
+        return r;
     }
+    //Uses the poly_print function syntax
+    //First part
+    asprintf(&string1, "%c%d", p->coeff > 0 ? '+' : '\0', p->coeff);
 
+    //Prints out the coefficient string to a second string
     if(p->exp > 1) {
-        asprintf(&s, "x^%d", p->exp);
+        asprintf(&string2, "x^%d", p->exp);
     } else if (p->exp == 1) {
-        asprintf(&s, "x");
+        asprintf(&string2, "x");
     }
-    asprintf(&s, "%c%d%s", p->coeff > 0 ? '+' : '\0', p->coeff, s);
+ 
+    //Combines the two strings together
+    //TODO: Replace with a strncat, asprintf is unnessecary
+    //TODO: Figure out how to do this without so much variables
+    //          asprintf doesn't like using itself, can't free memory
+    asprintf(&r, "%s%s", string1, string2);
+    free(string1);
+    free(string2);
 
     if(p->next != NULL)
     {
-        asprintf(&s, "%s%s", s, poly_to_string(p->next));
+        asprintf(&r, "%s%s", r, poly_to_string(p->next));
     }
-    return s; 
+    return r; 
 }
 
