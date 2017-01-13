@@ -35,6 +35,8 @@ char *poly_to_string(const polynomial *p);
 // *poly_div(const polynomial *a, const polynomial *b, polynomial **r);
 //Solution function
 // poly_roots(polynomial *p, complex *solutions, size_t sz);
+//TODO: Write a highest coefficient finder to the print functions to determine if
+//          The + should be used in the prints
 
 struct term *term_create(int coeff, int exp)
 {
@@ -87,11 +89,9 @@ void poly_add_term(polynomial **front, polynomial *newTerm)
 
 int main(void)
 {
-    polynomial *myPoly = term_create(5, 2);
-    myPoly->next = term_create(3, 1);
+    polynomial *myPoly = term_create(-5, 2);
 
-    char *s = poly_to_string(myPoly);
-    poly_print(myPoly);
+    char *s = poly_to_string(myPoly); //You need to free this pointer
     poly_destroy(myPoly);
 
     printf("%s\n", s);
@@ -100,30 +100,26 @@ int main(void)
 
 char *poly_to_string(const polynomial *p)
 {
-    char *string1;
-    char *string2;
+    char sign;
     char *r;
     if(!p) {
         return r;
     }
-    //Uses the poly_print function syntax
+
     //First part
-    asprintf(&string1, "%c%d", p->coeff > 0 ? '+' : '\0', p->coeff);
+    if(p->coeff > 0)
+    {
+        sign = '+';
+    }   else if (p->coeff < 0) {
+        sign = '-';
+    }
 
     //Prints out the coefficient string to a second string
     if(p->exp > 1) {
-        asprintf(&string2, "x^%d", p->exp);
+        asprintf(&r, "%c%dx^%d", sign, p->coeff*-1, p->exp);
     } else if (p->exp == 1) {
-        asprintf(&string2, "x");
+        asprintf(&r, "x");
     }
- 
-    //Combines the two strings together
-    //TODO: Replace with a strncat, asprintf is unnessecary
-    //TODO: Figure out how to do this without so much variables
-    //          asprintf doesn't like using itself, can't free memory
-    asprintf(&r, "%s%s", string1, string2);
-    free(string1);
-    free(string2);
 
     if(p->next != NULL)
     {
