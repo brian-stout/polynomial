@@ -11,8 +11,6 @@ typedef struct term polynomial;
 
 //WARNING: Watch when subtracting equal coefficients
 
-
-
 //char *poly_to_string(const polynomial *p);
 //polynomial *poly_add(const polynomial *a, const polynomial *b);
 //polynomial *poly_sub(const polynomial *a, const polynomial *b);
@@ -20,6 +18,9 @@ typedef struct term polynomial;
 //void poly_iterate(polynomial *p, void (*transform)(struct term *));
 //double poly_eval(const polynomial *p, double x);
 //Write in a simplifier
+
+//Flourishes and challenges
+//Support all solutions via complex type
 //Multiplication function
 //*poly_mult(const polynomial *a, const polynomial);
 //Exponential function
@@ -69,7 +70,24 @@ void poly_print(const polynomial *eqn)
     poly_print(eqn->next);
 }
 
+void poly_add_term(polynomial **front, polynomial *newTerm)
+{
+    struct term *cursor;
+    cursor = *front;
+
+    while(cursor->next != NULL)
+    {
+        cursor = cursor->next;
+    }
+    cursor->next=newTerm;
+}
+
 int main(void)
 {
     printf("Hello word!\n");
+    polynomial *myPoly = term_create(5, 2);
+    poly_add_term(&myPoly, term_create(2, 1));
+    poly_add_term(&myPoly, term_create(2, 1));
+    poly_add_term(&myPoly, term_create(2, 1));
+    poly_print(myPoly);
 }
