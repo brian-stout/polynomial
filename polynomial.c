@@ -87,15 +87,62 @@ void poly_add_term(polynomial **front, polynomial *newTerm)
     cursor->next=newTerm;
 }
 
+polynomial *poly_add(const polynomial *a, const polynomial *b)
+{
+    polynomial *polySum;
+    if(a->exp == b->exp)
+    {
+        polySum = term_create(a->coeff+b->coeff, a->exp);
+        a = a->next;
+        b = b->next;
+    }
+    else if (a->exp > b->exp)
+    {
+        polySum = term_create(a->coeff, a->exp);
+        a = a->next;
+    }
+    else
+    {
+        polySum = term_create(b->coeff, b->exp);
+        b = b->next;
+    }
+    while(a != NULL)
+    {
+        if(a->exp == b->exp)
+        {
+            poly_add_term(&polySum, term_create(a->coeff+b->coeff, a->exp));
+            a = a->next;
+            b = b->next;
+        }
+        else if (a->exp > b->exp)
+        {
+            poly_add_term(&polySum, term_create(a->coeff, a->exp));
+            a = a->next;
+        }
+        else
+        {
+            poly_add_term(&polySum, term_create(b->coeff, b->exp));
+            b = b->next;
+        }
+    }
+
+    return polySum;
+}
+
 int main(void)
 {
-    polynomial *myPoly = term_create(-5, 2);
+    polynomial *poly1 = term_create(3, 3);
+    poly_add_term(&poly1, term_create(2, 2));
+    poly_add_term(&poly1, term_create(1, 1));
+    poly_print(poly1);     printf("\n");
 
-    char *s = poly_to_string(myPoly); //You need to free this pointer
-    poly_destroy(myPoly);
+    polynomial *poly2 = term_create(3, 3);
+    poly_add_term(&poly2, term_create(2, 2));
+    poly_print(poly2);     printf("\n");
 
-    printf("%s\n", s);
-    free(s);
+    polynomial *results = poly_add(poly1, poly2);
+    poly_print(results);    printf("\n");
+
 }
 
 char *poly_to_string(const polynomial *p)
