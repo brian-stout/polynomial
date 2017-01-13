@@ -2,6 +2,7 @@
                     //Should create a modified snprintf for portability later
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 struct term {
@@ -90,6 +91,7 @@ void poly_add_term(polynomial **front, polynomial *newTerm)
 polynomial *poly_add(const polynomial *a, const polynomial *b)
 {
     polynomial *polySum;
+    
     if(a->exp == b->exp)
     {
         polySum = term_create(a->coeff+b->coeff, a->exp);
@@ -106,9 +108,24 @@ polynomial *poly_add(const polynomial *a, const polynomial *b)
         polySum = term_create(b->coeff, b->exp);
         b = b->next;
     }
-    while(a != NULL)
+
+    while(true)
     {
-        if(a->exp == b->exp)
+        if(a == NULL && b == NULL)
+        {
+            break;
+        }
+        else if(a == NULL)
+        {
+            poly_add_term(&polySum, term_create(b->coeff, b->exp));
+            b = b->next;            
+        }
+        else if(b == NULL)
+        {
+            poly_add_term(&polySum, term_create(a->coeff, a->exp));
+            a = a->next;
+        }
+        else if(a->exp == b->exp)
         {
             poly_add_term(&polySum, term_create(a->coeff+b->coeff, a->exp));
             a = a->next;
@@ -134,6 +151,7 @@ int main(void)
     polynomial *poly1 = term_create(3, 3);
     poly_add_term(&poly1, term_create(2, 2));
     poly_add_term(&poly1, term_create(1, 1));
+    poly_add_term(&poly1, term_create(1, 0));
     poly_print(poly1);     printf("\n");
 
     polynomial *poly2 = term_create(3, 3);
@@ -165,7 +183,9 @@ char *poly_to_string(const polynomial *p)
     if(p->exp > 1) {
         asprintf(&r, "%c%dx^%d", sign, p->coeff*-1, p->exp);
     } else if (p->exp == 1) {
-        asprintf(&r, "x");
+        asprintf(&r, "%c%dx", sign, p->coeff*-1);
+    } else {
+        asprintf(&r, "%c%d", sign, p->coeff*-1);
     }
 
     if(p->next != NULL)
