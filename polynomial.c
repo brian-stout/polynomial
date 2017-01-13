@@ -5,18 +5,20 @@ struct term {
     int coeff;
     unsigned int exp;
     struct term *next;
-}
+};
 
 typedef struct term polynomial;
 
 //WARNING: Watch when subtracting equal coefficients
 
-char *poly_to_string(const polynomial *p);
-polynomial *poly_add(const polynomial *a, const polynomial *b);
-polynomial *poly_sub(const polynomial *a, const polynomial *b);
-bool poly_equal(const polynomial *a, const polynomial *b);
-void poly_iterate(polynomial *p, void (*transform)(struct term *));
-double poly_eval(const polynomial *p, double x);
+
+
+//char *poly_to_string(const polynomial *p);
+//polynomial *poly_add(const polynomial *a, const polynomial *b);
+//polynomial *poly_sub(const polynomial *a, const polynomial *b);
+//bool poly_equal(const polynomial *a, const polynomial *b);
+//void poly_iterate(polynomial *p, void (*transform)(struct term *));
+//double poly_eval(const polynomial *p, double x);
 //Write in a simplifier
 //Multiplication function
 //*poly_mult(const polynomial *a, const polynomial);
@@ -56,7 +58,7 @@ void poly_print(const polynomial *eqn)
         return;
     }
     if(eqn->coeff) {
-        printf("%c%d", eqn->coeff > 0 ? '+' : '\0\, eqn->coeff);
+        printf("%c%d", eqn->coeff > 0 ? '+' : '\0', eqn->coeff);
         if(eqn->exp > 1) {
             printf("x^%d", eqn->exp);
         } else if (eqn->exp == 1) {
@@ -65,4 +67,9 @@ void poly_print(const polynomial *eqn)
         printf(" ");
     }
     poly_print(eqn->next);
+}
+
+int main(void)
+{
+    printf("Hello word!\n");
 }
