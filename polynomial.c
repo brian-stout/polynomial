@@ -1,3 +1,5 @@
+#define _GNU_SOURCE //Used for asprintf function
+                    //Should create a modified snprintf for portability later
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,7 +13,7 @@ typedef struct term polynomial;
 
 //WARNING: Watch when subtracting equal coefficients
 
-//char *poly_to_string(const polynomial *p);
+char *poly_to_string(const polynomial *p);
 //polynomial *poly_add(const polynomial *a, const polynomial *b);
 //polynomial *poly_sub(const polynomial *a, const polynomial *b);
 //bool poly_equal(const polynomial *a, const polynomial *b);
@@ -84,10 +86,25 @@ void poly_add_term(polynomial **front, polynomial *newTerm)
 
 int main(void)
 {
-    printf("Hello word!\n");
     polynomial *myPoly = term_create(5, 2);
-    poly_add_term(&myPoly, term_create(2, 1));
-    poly_add_term(&myPoly, term_create(2, 1));
-    poly_add_term(&myPoly, term_create(2, 1));
-    poly_print(myPoly);
+    char *s = poly_to_string(myPoly);
+    printf("%s\n", s);
+}
+
+char *poly_to_string(const polynomial *p)
+{
+    char *s = "";
+    if(!p) {
+        return s;
+    }
+
+    if(p->exp > 1) {
+        asprintf(&s, "x^%d", p->exp);
+    } else if (p->exp == 1) {
+        asprintf(&s, "x");
+    }
+    asprintf(&s, "%c%d%s", p->coeff > 0 ? '+' : '\0', p->coeff, s);
+
+    return s;
+    
 }
