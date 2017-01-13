@@ -87,6 +87,7 @@ void poly_add_term(polynomial **front, polynomial *newTerm)
 int main(void)
 {
     polynomial *myPoly = term_create(5, 2);
+    poly_add_term(&myPoly, term_create(3, 1));
     char *s = poly_to_string(myPoly);
     printf("%s\n", s);
 }
@@ -105,6 +106,10 @@ char *poly_to_string(const polynomial *p)
     }
     asprintf(&s, "%c%d%s", p->coeff > 0 ? '+' : '\0', p->coeff, s);
 
-    return s;
-    
+    if(p->next != NULL)
+    {
+        asprintf(&s, "%s%s", s, poly_to_string(p->next));
+    }
+    return s; 
 }
+
