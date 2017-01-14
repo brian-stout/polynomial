@@ -2,24 +2,28 @@ CPPFLAGS+=-Wall -Wextra -Wpedantic
 CPPFLAGS+=-Wwrite-strings -Wstack-usage=1024 -Wfloat-equal
 CPPFLAGS+=-Waggregate-return -Winline
 
-CFLAGS+=-std=c11 -g
+CFLAGS+=-std=c11
 
 LDLIBS+=-lm
 
-BIN=polynomial
-DEPS=polynomial.o
+BIN=driver
+OBJS=driver.o polynomial.o
 
-$(BIN) : $(DEPS)
+.PHONY: debug profile clean run val
 
-.PHONY: debug profile clean
+all: $(BIN)
+
+driver: driver.o polynomial.o
 
 debug: CFLAGS+=-g
+debug: $(BIN)
 
 profile: CFLAGS+=-pg
 profile: LDFLAGS+=-pg
+profile: $(BIN)
 
 clean:
-	$(RM) $(BIN) $(DEPS)
+	$(RM) $(OBJS) $(BIN) 
 
 run:
 	./$(BIN)
