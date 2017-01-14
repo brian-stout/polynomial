@@ -18,9 +18,8 @@ typedef struct term polynomial;
 char *poly_to_string(const polynomial *p);
 polynomial *poly_add(const polynomial *a, const polynomial *b);
 polynomial *poly_sub(const polynomial *a, const polynomial *b);
-struct term *term_equal 
-//bool poly_equal(const polynomial *a, const polynomial *b);
-//void poly_iterate(polynomial *p, void (*transform)(struct term *));
+int poly_equal(const polynomial *a, const polynomial *b);
+void poly_iterate(polynomial *p, void (*transform)(struct term *));
 //double poly_eval(const polynomial *p, double x);
 //Write in a simplifier
 
@@ -100,16 +99,19 @@ int main(void)
     poly_add_term(&poly1, term_create(2, 0));
     poly_print(poly1);     printf("\n");
 
-    polynomial *poly2 = term_create(1, 3);
-    poly_add_term(&poly2, term_create(1, 2));
+    polynomial *poly2 = term_create(4, 3);
+    poly_add_term(&poly2, term_create(3, 2));
+    poly_add_term(&poly2, term_create(2, 1));
+    poly_add_term(&poly2, term_create(2, 1));
     poly_print(poly2);     printf("\n");
 
-    polynomial *results = poly_sub(poly1, poly2);
-    poly_print(results);    printf("\n");
 
+    if (poly_equal(poly1, poly2))
+    {
+        printf("The polynominals are equal!\n");
+    }
     poly_destroy(poly1);
     poly_destroy(poly2);
-    poly_destroy(results);
 
 }
 
@@ -230,5 +232,40 @@ char *poly_to_string(const polynomial *p)
         asprintf(&r, "%s%s", r, poly_to_string(p->next));
     }
     return r; 
+}
+
+int poly_equal(const polynomial *a, const polynomial *b)
+{
+    int r = 1;
+
+    while(a != NULL)
+    {
+        if(b == NULL)
+        {
+            r = 0;
+            break;
+        }
+        if (a->coeff != b->coeff || a->exp != b->exp)
+        {
+            r= 0;
+            break;
+        }
+        else
+        {
+            a = a->next;
+            b = b->next;
+        }
+    }
+    return r;
+}
+
+void poly_iterate(polynomial *p, void (*transform)(struct term *))
+{
+    struct term *cursor = p;
+    while(cursor != NULL)
+    {
+        transform(cursor);
+        cursor = cursor->next;
+    }
 }
 
