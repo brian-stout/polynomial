@@ -20,6 +20,18 @@ void poly_destroy(polynomial *eqn)
     }
 }
 
+void poly_add_term(polynomial **front, polynomial *newTerm)
+{
+    struct term *cursor;
+    cursor = *front;
+
+    while(cursor->next != NULL)
+    {
+        cursor = cursor->next;
+    }
+    cursor->next=newTerm;
+}
+
 void poly_print(const polynomial *eqn)
 {
     if(!eqn) {
@@ -37,16 +49,37 @@ void poly_print(const polynomial *eqn)
     poly_print(eqn->next);
 }
 
-void poly_add_term(polynomial **front, polynomial *newTerm)
+//TODO: Test this more thoroughly
+char *poly_to_string(const polynomial *p)
 {
-    struct term *cursor;
-    cursor = *front;
-
-    while(cursor->next != NULL)
-    {
-        cursor = cursor->next;
+    char sign;
+    char *r;
+    if(!p) {
+        return r;
     }
-    cursor->next=newTerm;
+
+    //First part
+    if(p->coeff > 0)
+    {
+        sign = '+';
+    }   else if (p->coeff < 0) {
+        sign = '-';
+    }
+
+    //Prints out the coefficient string to a second string
+    if(p->exp > 1) {
+        asprintf(&r, "%c%dx^%d", sign, p->coeff*-1, p->exp);
+    } else if (p->exp == 1) {
+        asprintf(&r, "%c%dx", sign, p->coeff*-1);
+    } else {
+        asprintf(&r, "%c%d", sign, p->coeff*-1);
+    }
+
+    if(p->next != NULL)
+    {
+        asprintf(&r, "%s%s", r, poly_to_string(p->next));
+    }
+    return r; 
 }
 
 polynomial *poly_add(const polynomial *a, const polynomial *b)
@@ -133,39 +166,6 @@ polynomial *poly_sub(const polynomial *a, const polynomial *b)
     free(cursor);
 
     return polySum;
-}
-
-//TODO: Test this more thoroughly
-char *poly_to_string(const polynomial *p)
-{
-    char sign;
-    char *r;
-    if(!p) {
-        return r;
-    }
-
-    //First part
-    if(p->coeff > 0)
-    {
-        sign = '+';
-    }   else if (p->coeff < 0) {
-        sign = '-';
-    }
-
-    //Prints out the coefficient string to a second string
-    if(p->exp > 1) {
-        asprintf(&r, "%c%dx^%d", sign, p->coeff*-1, p->exp);
-    } else if (p->exp == 1) {
-        asprintf(&r, "%c%dx", sign, p->coeff*-1);
-    } else {
-        asprintf(&r, "%c%d", sign, p->coeff*-1);
-    }
-
-    if(p->next != NULL)
-    {
-        asprintf(&r, "%s%s", r, poly_to_string(p->next));
-    }
-    return r; 
 }
 
 int poly_equal(const polynomial *a, const polynomial *b)
