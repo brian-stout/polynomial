@@ -86,6 +86,9 @@ poly_iterate( polynomial *, void (*)(struct term *) );
 void
 test_print( struct term * );
 
+/**	poly_eval() evaluates each term in the polynomial using the provided double and keeps a
+*       running total of each term which it returns at the end.
+*/
 double
 poly_eval(const polynomial *, double );
 
