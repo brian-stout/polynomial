@@ -43,7 +43,7 @@ int
 poly_equal( const polynomial *, const polynomial * );
 
 void
-poly_iterate( polynomial *, void (*)(struct term *));
+poly_iterate( polynomial *, void (*)(struct term *) );
 
 void
 test_print( struct term * );
