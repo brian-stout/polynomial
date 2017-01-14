@@ -72,6 +72,7 @@ poly_to_string(const polynomial * p)
 
     if (!p)
     {
+        r = NULL;
         return r;
     }
 
@@ -89,15 +90,15 @@ poly_to_string(const polynomial * p)
     //Handles the three cases for the exponents
     if (p->exp > 1)
     {
-        asprintf(&r, "%c%dx^%d", sign, p->coeff * -1, p->exp); // * -1 avoid double negative sign
+        asprintf(&r, "%c%dx^%d", sign, abs(p->coeff), p->exp); // * -1 avoid double negative sign
     }
     else if (p->exp == 1)
     {
-        asprintf(&r, "%c%dx", sign, p->coeff * -1);
+        asprintf(&r, "%c%dx", sign, abs(p->coeff));
     }
     else
     {
-        asprintf(&r, "%c%d", sign, p->coeff * -1);
+        asprintf(&r, "%c%d", sign, abs(p->coeff));
     }
 
     //Uses recursion to print out the rest of the coefficients until the end
@@ -228,7 +229,6 @@ poly_equal(const polynomial * a, const polynomial * b)
     if(b != NULL)
     {
         r = 0;
-        break;
     }
     return r;
 }
