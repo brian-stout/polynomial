@@ -27,12 +27,12 @@ poly_destroy(polynomial * eqn)
 }
 
 void
-poly_add_term(polynomial ** front, polynomial * newTerm)
+poly_add_term(polynomial ** front, struct term * newTerm)
 {
-    struct term *cursor;
-
+    polynomial *cursor;
     cursor = *front;
 
+    //Goes to end of the linked list
     while (cursor->next != NULL)
     {
         cursor = cursor->next;
@@ -75,7 +75,7 @@ poly_to_string(const polynomial * p)
         return r;
     }
 
-    //First part
+    //Used to determine the signage later on
     if (p->coeff > 0)
     {
         sign = '+';
@@ -85,10 +85,11 @@ poly_to_string(const polynomial * p)
         sign = '-';
     }
 
-    //Prints out the coefficient string to a second string
+    //asprintf automatically handles memory
+    //Handles the three cases for the exponents
     if (p->exp > 1)
     {
-        asprintf(&r, "%c%dx^%d", sign, p->coeff * -1, p->exp);
+        asprintf(&r, "%c%dx^%d", sign, p->coeff * -1, p->exp); // * -1 avoid double negative sign
     }
     else if (p->exp == 1)
     {
@@ -99,6 +100,7 @@ poly_to_string(const polynomial * p)
         asprintf(&r, "%c%d", sign, p->coeff * -1);
     }
 
+    //Uses recursion to print out the rest of the coefficients until the end
     if (p->next != NULL)
     {
         asprintf(&r, "%s%s", r, poly_to_string(p->next));
@@ -109,6 +111,8 @@ poly_to_string(const polynomial * p)
 polynomial *
 poly_add(const polynomial * a, const polynomial * b)
 {
+    //Creates a dummy polynomial term for poly_add_term to link new terms to
+    //This easier to understand than running all the logic outside of the while loop once
     polynomial *polySum = term_create(0, 0);
 
     while (a != NULL && b != NULL)
@@ -142,7 +146,7 @@ poly_add(const polynomial * a, const polynomial * b)
     }
 
     //Removes the zero, could replace this with the polynomial simplifier later on
-    //  or add a specific function for removing exp 0s
+    //TODO: Write a function that elimiates 0 coefficients
     polynomial *cursor = polySum;
 
     polySum = polySum->next;
@@ -186,8 +190,6 @@ poly_sub(const polynomial * a, const polynomial * b)
         }
     }
 
-    //Removes the zero, could replace this with the polynomial simplifier later on
-    //  or add a specific function for removing exp 0s
     polynomial *cursor = polySum;
 
     polySum = polySum->next;
@@ -203,11 +205,13 @@ poly_equal(const polynomial * a, const polynomial * b)
 
     while (a != NULL)
     {
+        //Checks to see if polynomial b is shorter than a
         if (b == NULL)
         {
             r = 0;
             break;
         }
+        //Checks to see if either the coefficient or exponents are different
         if (a->coeff != b->coeff || a->exp != b->exp)
         {
             r = 0;
@@ -218,6 +222,13 @@ poly_equal(const polynomial * a, const polynomial * b)
             a = a->next;
             b = b->next;
         }
+    }
+
+    //Checks to see if polynomial b is longer than a
+    if(b != NULL)
+    {
+        r = 0;
+        break;
     }
     return r;
 }
@@ -243,6 +254,8 @@ test_print(struct term *a)
 double
 poly_eval(const polynomial * p, double x)
 {
+    
+    //Initialized as 0 so if passed a NULL pointer it just returns 0 instead of garbage
     double total = 0;
     double result = 0;
 
