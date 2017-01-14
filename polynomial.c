@@ -210,11 +210,15 @@ void test_print(struct term *a)
 
 double poly_eval(const polynomial *p, double x)
 {
-    double r;
+    double total = 0;
+    double result = 0;
+
     while(p != NULL)
     {
-        r += (x*pow(p->coeff, p->exp));
+        result = pow(x, p->exp);
+        result *= p->coeff;
+        total += result;
         p = p->next;
     }
-    return r;
+    return total;
 }
