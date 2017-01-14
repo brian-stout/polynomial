@@ -2,14 +2,15 @@
 #define POLYNOMINAL_H
 
 #define _GNU_SOURCE //Used for asprintf function
-                    //Should create a modified snprintf for portability later
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
-struct term {
+struct term
+{
     int coeff;
     unsigned int exp;
     struct term *next;
@@ -17,19 +18,38 @@ struct term {
 
 typedef struct term polynomial;
 
-//WARNING: Watch when subtracting equal coefficients
-struct term *term_create(int coeff, int exp);
-void poly_destroy(polynomial *eqn);
-void poly_add_term(polynomial **front, polynomial *newTerm);
-void poly_print(const polynomial *eqn);
-char *poly_to_string(const polynomial *p);
-polynomial *poly_add(const polynomial *a, const polynomial *b);
-polynomial *poly_sub(const polynomial *a, const polynomial *b);
-int poly_equal(const polynomial *a, const polynomial *b);
-void poly_iterate(polynomial *p, void (*transform)(struct term *));
+struct term *
+term_create( int, int );
 
-void test_print(struct term *);
-double poly_eval(const polynomial *p, double x);
+void
+poly_destroy( polynomial * );
+
+void
+poly_add_term( polynomial **, polynomial * );
+
+void
+poly_print( const polynomial * );
+
+char *
+poly_to_string( const polynomial * );
+
+polynomial *
+poly_add( const polynomial *, const polynomial * );
+
+polynomial *
+poly_sub( const polynomial *, const polynomial * );
+
+int
+poly_equal( const polynomial *, const polynomial * );
+
+void
+poly_iterate( polynomial *, void (*)(struct term *));
+
+void
+test_print( struct term * );
+
+double
+poly_eval(const polynomial *, double );
 //Write in a simplifier
 
 //Flourishes and challenges
